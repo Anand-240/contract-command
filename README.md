@@ -4,13 +4,13 @@ ContractCommand is a defense procurement workflow application. It links procurem
 
 ## Architecture
 
-React 18 + TypeScript + Vite + Tailwind → Axios → Django REST Framework → service rules → Django ORM → MySQL in Docker. Local backend development uses SQLite when `DB_HOST` is unset.
+React 18 + TypeScript + Vite + Tailwind → Axios → Django REST Framework → service rules → Django ORM → PostgreSQL. The Docker app can connect to Supabase PostgreSQL; a separate Compose overlay provides disposable local PostgreSQL for development and tests.
 
 `src/` contains the existing React pages, components, hooks, types, and API services. `backend/core/` contains models, serializers, API views, business services, tests, migrations, and the demo seed command. The API uses the same camel case field names as the frontend.
 
 ## Development setup
 
-Requires Python 3.12+, Node 22+, and npm.
+Requires Python 3.12+, Node 22+, npm, and PostgreSQL. Set `DATABASE_URL`, `DB_SSLMODE`, and `DJANGO_SECRET_KEY` in your environment before running Django outside Docker.
 
 ```bash
 python3 -m venv .venv
@@ -28,24 +28,26 @@ npm run dev
 
 Open `http://localhost:5173`. Vite proxies `/api` to Django on port 8000. For a separate API host, set `VITE_API_BASE_URL` to its `/api` URL and set `CORS_ALLOWED_ORIGINS` to the frontend origin.
 
-## Docker and MySQL
+## Docker and Supabase PostgreSQL
 
-Copy `.env.example` to `.env` and replace the placeholder passwords and secret key. Then run:
+Copy `.env.example` to `.env`. Put your Supabase PostgreSQL **connection string** in `DATABASE_URL` and replace the secret key. A Supabase publishable or service role API key is not a database password. URL-encode special characters in the database password and keep `.env` private. Then run:
 
 ```bash
-docker compose up --build
+docker compose up -d --build
 ```
 
-Open `http://localhost:5173`; API docs are at `http://localhost:8000/api/docs/` and ReDoc at `/api/redoc/`. MySQL and uploaded documents use named Docker volumes. The backend waits for MySQL, then runs migrations and collects static files at startup. Gunicorn serves the API; Nginx serves the built React app and proxies `/api`. Seed the demo records after the containers are healthy:
+Open `http://localhost:5173`; API health is at `/api/health/`, API docs are at `http://localhost:8000/api/docs/`, and ReDoc is at `/api/redoc/`. Supabase holds relational data; uploaded documents use the Docker `protected_media` volume. The backend waits for PostgreSQL, runs migrations, then starts Gunicorn. Nginx serves the built React app and proxies `/api`. For a fresh **demo-only** database, seed records after containers are healthy:
 
 ```bash
 docker compose exec backend python manage.py seed_demo
 ```
 
-For the local showcase, set `VITE_DEMO_MODE=1` and `DEMO_PASSWORD=123456` in `.env` before building and seeding. The seed command is repeatable. Outside demo mode, it requires a password of at least 12 characters. Do not use seeded accounts or the demo password in production.
+For the local showcase, set `VITE_DEMO_MODE=1` and `DEMO_PASSWORD=123456` in `.env` before building and seeding. The seed command is repeatable but updates demo user passwords; do not run it against real users. Outside demo mode, it requires a password of at least 12 characters. Do not use seeded accounts or the demo password in production.
 Sessions expire after 8 hours by default. Set `AUTH_TOKEN_TTL_HOURS` in `.env` to change the duration; signing in again replaces the previous token.
 The Admin account can manage users and Django groups at `http://localhost:8000/admin/`. Workflow permissions are defined in `backend/core/services.py`; the in-app Account and access page shows the signed-in user's workspace.
-For a local walkthrough, `VITE_DEMO_MODE=1` adds role buttons that fill the demo email and password. Keep this flag off for other deployments.
+For a local walkthrough, `VITE_DEMO_MODE=1` adds role buttons that fill the demo email and password. The GitHub Actions production image builds with this flag off. For a local PostgreSQL container instead of Supabase, run `docker compose -f docker-compose.yml -f docker-compose.local.yml up -d --build` with `POSTGRES_PASSWORD` set in `.env`.
+
+See [DEPLOYMENT.md](DEPLOYMENT.md) for Supabase setup, MySQL data migration, GitHub Actions, HTTPS, backups, and deployment requirements.
 
 ## Local demo data
 
@@ -104,18 +106,20 @@ cd backend && ../.venv/bin/python manage.py spectacular --validate --file /tmp/c
 npm run build
 ```
 
-The API tests cover login, authorization, a complete lifecycle, a quantity mismatch and correction, a price mismatch, missing delivery, payment guards, rejected plans, invalid dates, overdelivery, calculated totals, and read only audit access. `.gitlab-ci.yml` runs backend tests/schema validation and the frontend production build.
+The API tests cover login, authorization, a complete lifecycle, a quantity mismatch and correction, a price mismatch, missing delivery, payment guards, rejected plans, invalid dates, overdelivery, calculated totals, and read only audit access. `.github/workflows/ci-cd.yml` runs PostgreSQL tests, schema validation, frontend and Docker builds, then publishes and optionally deploys images.
 
 ## Environment
 
 | Variable | Purpose |
 | --- | --- |
-| `DJANGO_SECRET_KEY` | Required with MySQL |
+| `DJANGO_SECRET_KEY` | Required Django secret; generate a unique value per deployment |
 | `DJANGO_DEBUG` | `0` by default; use `1` only in development |
 | `DJANGO_ALLOWED_HOSTS` | Comma separated backend hosts |
 | `DJANGO_SECURE_SSL` | Set to `1` behind an HTTPS reverse proxy; enables secure cookies and HSTS |
-| `DB_HOST`, `DB_NAME`, `DB_USER`, `DB_PASSWORD`, `DB_PORT` | MySQL connection; SQLite if `DB_HOST` is unset |
-| `MYSQL_ROOT_PASSWORD` | Docker MySQL setup |
+| `DATABASE_URL` | Supabase PostgreSQL connection URL; required |
+| `DB_SSLMODE` | `require` for Supabase; `disable` for local PostgreSQL only |
+| `POSTGRES_PASSWORD` | Only for the local PostgreSQL Compose overlay |
+| `DJANGO_CSRF_TRUSTED_ORIGINS` | Public HTTPS origin for Django admin forms |
 | `CORS_ALLOWED_ORIGINS` | Allowed browser origins |
 | `VITE_API_BASE_URL` | Browser API base URL; defaults to `/api` |
 | `VITE_PROXY_TARGET` | Vite development proxy target |

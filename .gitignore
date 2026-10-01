@@ -3,6 +3,7 @@ dist/
 .venv/
 .env
 .local-backups/
+images.env
 *.tsbuildinfo
 backend/db.sqlite3
 backend/protected_media/

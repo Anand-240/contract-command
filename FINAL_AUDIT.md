@@ -1,5 +1,7 @@
 # ContractCommand final audit — 1 October 2026
 
+> Historical audit snapshot: database plumbing has since moved from MySQL to Supabase PostgreSQL. See [DEPLOYMENT.md](DEPLOYMENT.md) for current Docker and CI/CD setup. The business-control gaps listed below remain open until separately verified.
+
 ## Project completion
 
 **Overall status: NOT READY for production.** The local demonstration workflow works through the real MySQL API, including a failed and corrected three way match. Production readiness remains blocked by the gaps below and by an unverified browser walkthrough.
