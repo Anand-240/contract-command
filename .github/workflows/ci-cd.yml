@@ -50,6 +50,7 @@ jobs:
         run: |
           python manage.py check
           python manage.py makemigrations --check --dry-run
+          python manage.py collectstatic --noinput
           python manage.py test core --noinput
           python manage.py spectacular --validate --file /tmp/contractcommand-openapi.yaml
       - name: Build frontend
