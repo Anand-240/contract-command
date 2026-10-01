@@ -1,0 +1,24 @@
+services:
+  db:
+    image: postgres:17
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: contractcommand
+      POSTGRES_USER: contractcommand
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U contractcommand -d contractcommand"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+  backend:
+    environment:
+      DATABASE_URL: postgresql://contractcommand:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}@db:5432/contractcommand
+      DB_SSLMODE: disable
+    depends_on:
+      db:
+        condition: service_healthy
+volumes:
+  postgres_data:

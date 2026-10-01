@@ -1,0 +1,11 @@
+node_modules/
+dist/
+.venv/
+.env
+.local-backups/
+*.tsbuildinfo
+backend/db.sqlite3
+backend/protected_media/
+__pycache__/
+*.pyc
+backend/staticfiles/

@@ -1,0 +1,128 @@
+@import "tailwindcss";
+
+/* ---------------------------------------------------------------
+   ContractCommand design tokens
+   Restrained enterprise palette: light neutral canvas, white
+   surfaces, one navy brand colour, muted semantic states.
+   --------------------------------------------------------------- */
+@theme {
+  --color-canvas: #f7f8fa;
+  --color-surface: #ffffff;
+  --color-surface-muted: #f2f4f7;
+  --color-surface-sunk: #eceff3;
+
+  --color-line: #e4e7ec;
+  --color-line-strong: #d0d5dd;
+
+  --color-ink: #1b2430;
+  --color-ink-muted: #58616f;
+  --color-ink-faint: #79828f;
+  --color-ink-invert: #ffffff;
+
+  --color-brand: #2a4a73;
+  --color-brand-hover: #21395a;
+  --color-brand-muted: #4a6b96;
+  --color-brand-tint: #eef2f8;
+  --color-brand-line: #c8d5e6;
+
+  --color-positive: #2f6e4f;
+  --color-positive-tint: #eaf3ed;
+  --color-positive-line: #c3ddcd;
+
+  --color-caution: #8a5a12;
+  --color-caution-tint: #fbf2e2;
+  --color-caution-line: #ecd7ab;
+
+  --color-critical: #9a3b34;
+  --color-critical-tint: #faeceb;
+  --color-critical-line: #eec9c5;
+
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --radius-sm: 4px;
+  --radius-DEFAULT: 6px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 10px;
+
+  --shadow-panel: 0 1px 2px rgba(27, 36, 48, 0.04), 0 1px 3px rgba(27, 36, 48, 0.03);
+  --shadow-raised: 0 1px 2px rgba(27, 36, 48, 0.05), 0 8px 20px rgba(27, 36, 48, 0.07);
+  --shadow-overlay: 0 4px 6px rgba(27, 36, 48, 0.06), 0 20px 48px rgba(27, 36, 48, 0.14);
+}
+
+@layer base {
+  * {
+    border-color: var(--color-line);
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    margin: 0;
+    background-color: var(--color-canvas);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: 14px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    font-feature-settings: "cv11", "ss01";
+  }
+
+  h1, h2, h3, h4 {
+    letter-spacing: -0.014em;
+    font-weight: 600;
+  }
+
+  /* Numerals line up in tables and money columns. */
+  table, .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-brand);
+    outline-offset: 2px;
+    border-radius: 3px;
+  }
+
+  ::placeholder {
+    color: var(--color-ink-faint);
+  }
+}
+
+@layer components {
+  .field-label {
+    @apply block text-[12.5px] font-medium text-ink mb-1.5;
+  }
+
+  .field-hint {
+    @apply mt-1.5 text-[12px] leading-snug text-ink-faint;
+  }
+
+  .field-error {
+    @apply mt-1.5 flex items-start gap-1.5 text-[12px] leading-snug text-critical;
+  }
+
+  .code {
+    @apply font-mono text-[12.5px] tracking-tight;
+  }
+
+  .panel {
+    @apply bg-surface border border-line rounded-lg;
+  }
+
+  .scroll-shadow {
+    scrollbar-width: thin;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

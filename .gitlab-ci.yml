@@ -1,0 +1,21 @@
+stages:
+  - test
+  - build
+backend-tests:
+  stage: test
+  image: python:3.12-slim
+  before_script:
+    - pip install -r backend/requirements.txt
+  script:
+    - cd backend
+    - python manage.py check
+    - python manage.py makemigrations --check --dry-run
+    - python manage.py test core
+    - python manage.py spectacular --validate --file /tmp/contractcommand-openapi.yaml
+frontend-build:
+  stage: build
+  image: node:22-alpine
+  before_script:
+    - npm ci
+  script:
+    - npm run build

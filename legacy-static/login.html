@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sign in · ContractCommand</title>
+<meta name="description" content="Sign in to ContractCommand.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body class="auth-page">
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a class="brand" href="index.html">
+      <span class="mark" aria-hidden="true">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="var(--on-navy)" stroke-width="1.6" stroke-linejoin="round"><path d="M8 1.6 13.6 4v4.2c0 3-2.3 5.3-5.6 6.2-3.3-.9-5.6-3.2-5.6-6.2V4L8 1.6Z"/><path d="M5.6 8.1 7.3 9.8l3.2-3.4" stroke-linecap="round"/></svg>
+      </span>
+      ContractCommand
+    </a>
+    <div class="nav-cta"><a class="btn btn-ghost" href="index.html">Back to home</a></div>
+  </div>
+</header>
+
+<main class="auth">
+  <div class="auth-card">
+    <p class="eyebrow">Authorized access</p>
+    <h1>Sign in</h1>
+    <p class="auth-sub">Use the credentials issued with your appointment.</p>
+
+    <form class="auth-form" method="post" action="#">
+      <label for="userid">User ID</label>
+      <input id="userid" name="userid" type="text" autocomplete="username" spellcheck="false" required placeholder="e.g. DPM/4412">
+
+      <label for="password">Password</label>
+      <input id="password" name="password" type="password" autocomplete="current-password" required placeholder="••••••••">
+
+      <button class="btn btn-primary btn-lg auth-submit" type="submit">Sign in</button>
+    </form>
+
+    <p class="auth-note">Every sign-in attempt is recorded in the audit trail.</p>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap foot-inner">
+    <div class="foot-brand">
+      <strong>ContractCommand</strong>
+      <span>Defense Procurement Management System</span>
+    </div>
+    <p class="foot-note">
+      © 2026 ContractCommand. All rights reserved.<br>
+      For authorized users only.
+    </p>
+  </div>
+</footer>
+</body>
+</html>
